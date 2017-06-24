@@ -5,12 +5,6 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-// read the app deployment file
-const deploy = fsutil.yamlSafeLoadSync(config.deployFilename, config.apiDebug);
-console.log('Deploy:', deploy);
-if (deploy === undefined) throw new Error('Deploy config.deployFilename not found ', config.deployFilename);
-app.set('deploy', deploy);
-
 /**
  * Config to handle POSTs to API
  *  - Parse JSON and URL encode
