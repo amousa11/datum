@@ -1,8 +1,9 @@
 const path = require('path');
 const IOTA = require('iota.lib.js');
-const MAM = require('../lib/mam');
-const MerkleTree = require('../lib/merkle');
-const Encryption = require('../lib/encryption');
+const mam_client = require('mam.client.js');
+const MAM = mam_client.MAM;
+const MerkleTree = mam_client.Merkle;
+const Encryption = mam_client.Encryption;
 var Crypto = require('crypto.iota.js');
 
 const iota = new IOTA({
@@ -11,11 +12,9 @@ const iota = new IOTA({
 
 const mamController = {
   post: function(req, res) {
-    //post mam message here
-      const seed = 'WLLXTOGEZXQHWAAMSLROOOIRQASUIBSVEBHDBAQGIFTJZYNMGUFMMCBTNZBWIOYJUNBWGGGLFRIXQAVHH';
-      //const seed = req.body.seed;
-      const message = "PAUL HANDY IS HANDY";
-      //const message = req.body.message;
+      const seed = req.body.seed || 'WLLXTOGEZXQHWAAMSLROOOIRQASUIBSVEBHDBAQGIFTJZYNMGUFMMCBTNZBWIOYJUNBWGGGLFRIXQAVHH';
+      const message = req.body.message || (new Date()).toString();
+
       const channelKeyIndex = 3;
       const channelKey = Crypto.converter.trytes(Encryption.hash(Encryption.increment(Crypto.converter.trits(seed.slice()))));
       const start = 3;
@@ -45,17 +44,19 @@ const mamController = {
 
       // Send trytes
       iota.api.sendTrytes(mam.trytes, depth, minWeightMagnitude, (err, tx) => {
-        if (err)
+        if (err) {
           console.log(err);
-        else
-          console.log(tx);
+          res.status(500).json({seed: seed, message: message, error: err, success: false});
+        }
+        else {
+          console.log(JSON.stringify({seed: seed, message: message, tx: tx, success: true}), null, 2);
+          res.status(200).json({seed: seed, message: message, tx: tx, success: true});
+        }
       });
   },
   getMessage: function(req, res) {
-      const seed = 'WLLXTOGEZXQHWAAMSLROOOIRQASUIBSVEBHDBAQGIFTJZYNMGUFMMCBTNZBWIOYJUNBWGGGLFRIXQAVHH';
+      const seed = req.body.seed || 'WLLXTOGEZXQHWAAMSLROOOIRQASUIBSVEBHDBAQGIFTJZYNMGUFMMCBTNZBWIOYJUNBWGGGLFRIXQAVHH';
       const channelKeyIndex = 3;
-      //const seed = req.body.seed;
-
       //const channelKey = Crypto.converter.trytes(MAM.channelKey(Encryption.hash(Encryption.increment(Crypto.converter.trits(seed.slice()))), channelKeyIndex));
       const channelKey = Crypto.converter.trytes(Encryption.hash(Encryption.increment(Crypto.converter.trits(seed.slice()))));
       const start = 3;
@@ -72,18 +73,22 @@ const mamController = {
           channel: MAM.messageID(channelKey)
       }, function(e, result) {
           if(e == undefined) {
+            const rtn = {seed: seed, messages: [], success: true}
               result.ixi.map(mam => {
                   const output = MAM.parse({key: channelKey, message: mam.message, tag: mam.tag});
                   const asciiMessage = iota.utils.fromTrytes(output.message);
                   if (root === output.root) {
                       console.log("Public key match for " + root);
                   }
+                  rtn.messages.push(asciiMessage);
                   console.log("received: " + asciiMessage);
               });
-
+            console.log(JSON.stringify(rtn, null, 2));
+            res.status(200).json(rtn);
           }
           else {
-            console.log(e);
+            console.log(JSON.stringify({error: e, success: false}, null, 2));
+            res.status(500).json({error: e, success: false});
           }
       });
   }
