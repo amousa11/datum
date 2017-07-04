@@ -11,7 +11,7 @@ import java.lang.StringBuilder;
 import java.util.HashMap;
 
 import com.securityinnovation.jNeo.NtruException;
-import com.securityinnovation.jNeo.ntruencrypt.NtruEncryptKey;
+import com.securietyinnovation.jNeo.ntruencrypt.NtruEncryptKey;
 import org.json.JSONObject;
 import org.json.JSONException;
 
