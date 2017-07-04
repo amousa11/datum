@@ -26,7 +26,7 @@ class EncryptServer {
         HashMap<Socket, NtruEncryptKey> keyPairs = new HashMap();
 
         final File socketFile =
-                new File(new File(System.getProperty("java.io.tmpdir")), "datum.sock");
+                new File(new File("/tmp"), "datum.sock");
 
         try {
             AFUNIXServerSocket server = AFUNIXServerSocket.newInstance();
