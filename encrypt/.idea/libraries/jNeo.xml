@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="jNeo">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/jNeo.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
