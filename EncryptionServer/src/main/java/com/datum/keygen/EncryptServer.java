@@ -11,7 +11,7 @@ import java.lang.StringBuilder;
 import java.util.HashMap;
 
 import com.securityinnovation.jNeo.NtruException;
-import com.securietyinnovation.jNeo.ntruencrypt.NtruEncryptKey;
+import com.securityinnovation.jNeo.ntruencrypt.NtruEncryptKey;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -38,52 +38,47 @@ class EncryptServer {
                 try {
                     Socket sock = server.accept();
                     System.out.println("Connected: " + sock);
-
+                    InputStream is = sock.getInputStream();
+                    OutputStream os = sock.getOutputStream();
+                    //Converts input data to string and then to JSONObject.
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    StringBuilder in = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        in.append(line);
+                    }
+                    System.out.println(in.toString());
+                    reader.close();
                     try {
-                        InputStream is = sock.getInputStream();
-                        OutputStream os = sock.getOutputStream();
+                        JSONObject data = new JSONObject(in.toString());
+                        //Acts on the request sent by the client program.
+                        String request = data.getString("request");
 
-                        //Converts input data to string and then to JSONObject.
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                        StringBuilder out = new StringBuilder();
-                        String line;
-
-                        while ((line = reader.readLine()) != null) {
-                            out.append(line);
-                        }
-                        System.out.println(out.toString());
-                        reader.close();
-                        try {
-                            JSONObject data = new JSONObject(out.toString());
-                            //Acts on the request sent by the client program.
-                            String request = data.getString("request");
-
-                            if (request == "new_keypair") {
-                                //Generate new keypair and send public key to client
-                                try {
-                                    NtruEncryptKey key = EncryptTools.setupKeyPair();
-                                    keyPairs.put(sock, key);
-                                    os.write(key.getPubKey());
-                                } catch (NtruException e) {
-                                    System.out.println(e);
-                                }
-
-                            } else if (request == "decrypt_message") {
-                                //Decrypt message and send unencrypted data to client
-                                String cipherText = data.getString("message");
-                                try {
-                                    byte[] plainText = EncryptTools.decryptMessage(cipherText, keyPairs.get(sock));
-                                    os.write(plainText);
-                                } catch (NtruException e) {
-                                    System.out.println(e);
-                                }
+                        if (request == "new_keypair") {
+                            //Generate new keypair and send public key to client
+                            try {
+                                NtruEncryptKey key = EncryptTools.setupKeyPair();
+                                keyPairs.put(sock, key);
+                                os.write(key.getPubKey());
+                            } catch (NtruException e) {
+                                System.out.println(e);
                             }
-                            os.flush();
-                        } catch (JSONException e) {
-                            System.out.println("Incorrect input format");
+
+                        } else if (request == "decrypt_message") {
+                            //Decrypt message and send unencrypted data to client
+                            String cipherText = data.getString("message");
+                            try {
+                                byte[] plainText = EncryptTools.decryptMessage(cipherText, keyPairs.get(sock));
+                                os.write(plainText);
+                            } catch (NtruException e) {
+                                System.out.println(e);
+                            }
                         }
-                    } catch (IOException e) {
-                        System.out.println(e);
+                        os.flush();
+                    } catch (JSONException e) {
+                        System.out.println("Incorrect input format");
+                        os.write("Incorrect".getBytes());
+                        sock.close();
                     }
                 } catch (IOException e) {
                     System.out.println(e);

@@ -1,13 +1,21 @@
 const path = require('path');
+const net = require('net');
 const IOTA = require('iota.lib.js');
 const MAM = require('../lib/mam');
 const MerkleTree = require('../lib/merkle');
 const Encryption = require('../lib/encryption');
 var Crypto = require('crypto.iota.js');
+const unixSocket = 'tmp/datum.sock';
+var publicKey;
+var channelKey;
 
 const iota = new IOTA({
     provider: 'http://45.77.4.212:14265'
   });
+
+const encryptionClient = net.createConnection({
+    path: unixSocket
+});
 
 const mamController = {
   post: function(req, res) {
@@ -57,6 +65,7 @@ const mamController = {
       //const seed = req.body.seed;
 
       //const channelKey = Crypto.converter.trytes(MAM.channelKey(Encryption.hash(Encryption.increment(Crypto.converter.trits(seed.slice()))), channelKeyIndex));
+      //TODO: Use channel key retreived from the seller.
       const channelKey = Crypto.converter.trytes(Encryption.hash(Encryption.increment(Crypto.converter.trits(seed.slice()))));
       const start = 3;
       const count = 4;
@@ -86,7 +95,31 @@ const mamController = {
             console.log(e);
           }
       });
+  },
+  sendPayment: function(req, res) {
+      //TODO: Might need to reopen connection with socket server again.
+      encryptionClient.write({
+          request: "new_key_pair"
+      });
+      encryptionClient.on("data", function(data) {
+          publicKey = data.toString();
+          //TODO: Figure out how to generate the seed, choose depth and weight, and turn string to tytes.
+          iota.api.sendTransfer(seed, 5, 5
+              [{address: req.body.address, value: req.body.value, message: publicKey.toBytes()}])
+      });
+
+
+  },
+  decryptChannelKey: function(req, res) {
+      encryptionClient.write({
+          request: "decrypt_message",
+          message: req.body.message
+      });
+      encryptionClient.on("data", function(data) {
+            channelKey = data;
+      });
   }
+
 }
 
 module.exports = mamController;
