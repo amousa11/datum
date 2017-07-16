@@ -20,14 +20,21 @@ import com.securityinnovation.jNeo.OID;
 import com.securityinnovation.jNeo.Random;
 import com.securityinnovation.jNeo.ntruencrypt.NtruEncryptKey;
 
+//TODO: Documentation :(
 
 public class EncryptTools {
 
     public static NtruEncryptKey setupKeyPair() throws IOException, NtruException {
         Random prng = createSeededRandom();
+        //This is a specified security level. See NTRU docs.
         OID oid = OID.valueOf("ees1087ep2");
         return NtruEncryptKey.genKey(oid, prng);
 
+    }
+
+    public static byte[] encryptWithPublicKey(byte[] pubKey, byte[] channelKey) throws IOException, NtruException {
+        NtruEncryptKey buyerKey = new NtruEncryptKey(pubKey);
+        return buyerKey.encrypt(channelKey, createSeededRandom());
     }
 
     public static byte[] decryptMessage(String message, NtruEncryptKey ntrukey) throws IOException, NtruException {

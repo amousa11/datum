@@ -21,6 +21,7 @@ import org.newsclub.net.unix.AFUNIXSocketAddress;
 class EncryptServer {
 
 //    TODO: Is there a better way to write the code so that I am not catching every exception known to man???
+//    TODO: Create file with admin permissions. Might have to do this in packaging - when running the full program
     public static void main(String[] args) throws IOException, JSONException {
 
         HashMap<Socket, NtruEncryptKey> keyPairs = new HashMap();
@@ -54,7 +55,7 @@ class EncryptServer {
                         //Acts on the request sent by the client program.
                         String request = data.getString("request");
 
-                        if (request == "new_keypair") {
+                        if (request.equals("new_keypair")) {
                             //Generate new keypair and send public key to client
                             try {
                                 NtruEncryptKey key = EncryptTools.setupKeyPair();
@@ -64,7 +65,17 @@ class EncryptServer {
                                 System.out.println(e);
                             }
 
-                        } else if (request == "decrypt_message") {
+                        } else if (request.equals("encrypt_with_pubKey")) {
+                            byte[] pubKey = data.getString("pubKey").getBytes();
+                            byte[] channelKey = data.getString("channelKey").getBytes();
+                            try {
+                                byte[] encryptedKey = EncryptTools.encryptWithPublicKey(pubKey, channelKey);
+                                os.write(encryptedKey);
+                            } catch (NtruException e) {
+                                System.out.println(e);
+                            }
+
+                        } else if (request.equals("decrypt_message")) {
                             //Decrypt message and send unencrypted data to client
                             String cipherText = data.getString("message");
                             try {
