@@ -23,34 +23,28 @@ const encryptionClient = net.createConnection({
 });
 
 const mamController = {
-    post: function(req, res) {
-        const seed = req.body.seed || 'WLLXTOGEZXQHWAAMSLROOOIRQASUIBSVEBHDBAQGIFTJZYNMGUFMMCBTNZBWIOYJUNBWGGGLFRIXQAVHH';
-        const message = req.body.message || (new Date()).toString();
+  post: function(req, res) {
+      const seed = req.body.seed || 'WLLXTOGEZXQHWAAMSLROOOIRQASUIBSVEBHDBAQGIFTJZYNMGUFMMCBTNZBWIOYJUNBWGGGLFRIXQAVHH';
+      const message = req.body.message || (new Date()).toString();
 
-        const channelKeyIndex = 3;
-        const channelKey = Crypto.converter.trytes(Encryption.hash(Encryption.increment(Crypto.converter.trits(seed.slice()))));
-        const start = 3;
-        const count = 4;
-        const security = 1;
+      const channelKeyIndex = 3;
+      const channelKey = Crypto.converter.trytes(Encryption.hash(Encryption.increment(Crypto.converter.trits(seed.slice()))));
+      const start = 3;
+      const count = 4;
+      const security = 1;
 
-        const tree0 = new MerkleTree(seed, start, count, security);
-        const tree1 = new MerkleTree(seed, start + count, count, security);
-        let index = 0;
+      const tree0 = new MerkleTree(seed, start, count, security);
+      const tree1 = new MerkleTree(seed, start + count, count, security);
+      let index = 0;
 
-        // Get the trytes of the MAM transactions
-        const mam = new MAM.create({
-            message: iota.utils.toTrytes(message),
-            merkleTree: tree0,
-            index: index,
-            nextRoot: tree1.root.hash.toString(),
-            channelKey: channelKey,
-        });
-
-        // Depth
-        const depth = 4;
-
-        // minWeighMagnitude
-        const minWeightMagnitude = 15;
+      // Get the trytes of the MAM transactions
+      const mam = new MAM.create({
+          message: iota.utils.toTrytes(message),
+          merkleTree: tree0,
+          index: index,
+          nextRoot: tree1.root.hash.toString(),
+          channelKey: channelKey,
+      });
 
         console.log("Next Key: " + mam.nextKey);
 
@@ -76,7 +70,6 @@ const mamController = {
         const security = 1;
 
         const tree0 = new MerkleTree(seed, start, count, security);
-
         console.log("channelKey: ", channelKey);
 
         const root = tree0.root.hash.toString();
@@ -121,8 +114,6 @@ const mamController = {
           iota.api.sendTransfer(seed, depth, minWeightMagnitude,
               [{address: req.body.address, value: req.body.value, message: iota.utils.toTrytes(JSON.stringify(message))}])
       });
-
-
   },
   sendChannelKey: function(req, res) {
       encryptionClient.write({
