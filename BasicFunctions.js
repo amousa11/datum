@@ -123,9 +123,9 @@ $(document).ready(function() {
     1. Generate a new seed.
     2. Transfer tokens and data out of current seed into new seed.
     3. Give the person who bought data the old seed with all the data.
-    4. Add old seed into "subscribed array" -> send data to every seed in the array.
+    4. Add old seed into "subscribed array" -> where data is sent to every seed in the array.
     */
-    function shuffle(){
+    function shuffle(){ //Put in parameters for how you are sending seed to buyer
 
         iota.api.getAccountData(seed, function(e, accountData) {
 
@@ -145,10 +145,10 @@ $(document).ready(function() {
 
             var newAddress;
             
-            iota.api.getNewAddress( seed, { 'checksum': true }, function( e, newAddr ) {
+            iota.api.getNewAddress(seed, { 'checksum': true }, function( e, newAddr ) { //create new address for node
 
                 if (!e) {
-
+                    console.log("NEW ADDRESS GENERATED: ", newAddr);
                     newAddress = newAddr;
 
                 } else {
@@ -178,6 +178,8 @@ $(document).ready(function() {
             {
                 if(!e){
                     //do stuff in frontend
+                    
+
                 }
                 else {
                     console.log(e);
