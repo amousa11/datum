@@ -1,12 +1,9 @@
 #!/bin/bash
 
 #Shell script does not work
-TODO: Package Encryption Server into .jar
+#TODO: Package Encryption Server into .jar
 
-javac ./EncryptionServer/src/main/java/com/datum/keygen/EncryptTools.java
-javac ./EncryptionServer/src/main/java/com/datum/keygen/EncryptServer.java
+echo "Starting Encryption Server and client server..."
+java -cp ./EncryptionServer/target/encryption-server-1.0-SNAPSHOT.jar com.datum.keygen.EncryptServer & node ./server/index.js && fg
 
-java ./EncryptionServer/src/main/java/com/datum/keygen/EncryptTools.class
-java ./EncryptionServer/src/main/java/com/datum/keygen/EncryptServer.class
-
-node ./server/index.js
+trap 'kill $(jobs -p)' SIGINT SIGTERM EXIT

@@ -7,7 +7,7 @@ const MAM = mam_client.MAM;
 const MerkleTree = mam_client.Merkle;
 const Encryption = mam_client.Encryption;
 var Crypto = require('crypto.iota.js');
-const unixSocket = '/tmp/datum.sock';
+const unixSocket = '/private/tmp/datum.sock';
 
 /*
 TODO: Documentation
@@ -20,6 +20,10 @@ const iota = new IOTA({
 
 const encryptionClient = net.createConnection({
     path: unixSocket
+});
+
+encryptionClient.on("error", function() {
+    console.log("Could not find file")
 });
 
 const mamController = {
