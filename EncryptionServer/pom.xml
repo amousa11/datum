@@ -2,11 +2,31 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.datum.keygen</groupId>
-  <artifactId>KeyGenerator</artifactId>
+  <artifactId>encryption-server</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>KeyGenerator</name>
+  <name>EncryptionServer</name>
   <url>http://maven.apache.org</url>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <!-- No configurations at the moment -->
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
   <repositories>
     <repository>
       <id>local-maven-repo</id>
@@ -29,6 +49,11 @@
       <groupId>no.fiken.oss.junixsocket</groupId>
       <artifactId>junixsocket-native-common</artifactId>
       <version>1.0.2</version>
+    </dependency>
+    <dependency>
+        <groupId>com.datum.keygen</groupId>
+        <artifactId>jneo</artifactId>
+        <version>1.0.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.json/json -->
     <dependency>

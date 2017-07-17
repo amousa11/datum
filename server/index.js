@@ -24,7 +24,7 @@ app.use(cors());
  */
 const routes = require('./routes');
 app.use('/', routes);
-
+setInterval(function() {console.log("Checking....");}, 3000);
 
 // get the intended port number, use port 3031 if not provided
 const port = process.env.PORT || 3031;
