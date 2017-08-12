@@ -53,6 +53,7 @@
     <dependency>
         <groupId>com.datum.keygen</groupId>
         <artifactId>jneo</artifactId>
+
         <version>1.0.0</version>
     </dependency>
     <!-- https://mvnrepository.com/artifact/org.json/json -->
