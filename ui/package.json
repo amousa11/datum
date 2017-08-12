@@ -1,0 +1,36 @@
+{
+  "name": "datum",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "crypto.iota.js": "0.0.4",
+    "mam.client.js": "^0.2.2",
+    "node-sass": "^4.5.3",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-md": "^1.0.15",
+    "react-redux": "^5.0.5",
+    "react-redux-loading-bar": "^2.9.2",
+    "react-router": "^4.1.1",
+    "react-router-dom": "^4.1.1",
+    "react-router-redux": "^4.0.8",
+    "redux": "^3.7.0",
+    "redux-form": "^6.8.0",
+    "redux-saga": "^0.15.3"
+  },
+  "devDependencies": {
+    "react-scripts": "1.0.7",
+    "node-sass": "^4.5.2",
+    "npm-run-all": "^4.0.2"
+  },
+  "scripts": {
+    "build-css": "node-sass src/ -o src/",
+    "watch-css": "npm run build-css && node-sass src/ -o src/ --watch --recursive",
+    "start": "npm-run-all -p watch-css start-js",
+    "start-js": "react-scripts start",
+    "build": "npm run build-css && react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}

@@ -33,5 +33,24 @@
     "build": "npm run build-css && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  }
+  },
+  "name": "datum",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "start:back": "node server/index.js > server/stdout.txt 2> server/stderr.txt &"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "chai": "^3.2.0",
+    "cors": "^2.8.1",
+    "crypto.iota.js": "0.0.4",
+    "express": "^4.14.0",
+    "iota.lib.js": "^0.3.0",
+    "mam.client.js": "^0.2.2"
+  },
+  "author": "Blockchain at Berkeley A-Team",
+  "license": "ISC"
 }
